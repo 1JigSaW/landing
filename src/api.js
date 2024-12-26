@@ -52,3 +52,21 @@ export const fetchTags = async () => {
         throw new Error("Failed to fetch tags");
     }
 };
+
+
+export const saveReview = async (uniqueLink, text, tags, language) => {
+    try {
+        const response = await apiClient.post("save-review/", {
+            unique_link: uniqueLink,
+            text,
+            tags,
+            language,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error saving review:", error);
+        throw new Error("Failed to save review");
+    }
+};
+
+

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { generateReview, fetchLanguages, fetchTags, createLink } from "../api";
+import {generateReview, fetchLanguages, fetchTags, createLink, saveReview} from "../api";
 import Tags from "../components/Tags";
 
 const Landing = () => {
@@ -65,13 +65,28 @@ const Landing = () => {
         setTimeout(() => setCopied(false), 3000);
     };
 
-    const handleNavigateToLink = () => {
+    const handleNavigateToLink = async () => {
         if (!personalizedLink) {
             alert("Personalized link is not available.");
             return;
         }
-        window.open(personalizedLink, "_blank");
+
+        try {
+            await saveReview(
+                personalizedLink,
+                review,
+                selectedTags,
+                language
+            );
+            window.open(personalizedLink, "_blank");
+        } catch (error) {
+            console.error("Failed to save review:", error);
+            alert("Failed to save the review. Please try again.");
+        }
     };
+
+
+
 
     if (dataLoading) {
         return (
