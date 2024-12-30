@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {generateReview, fetchLanguages, fetchTags, createLink, saveReview} from "../api";
+import {generateReview, fetchLanguages, fetchTags, createLink, saveReview, fetchGeneratedTags} from "../api";
 import Tags from "../components/Tags";
 
 const Landing = () => {
@@ -12,6 +12,8 @@ const Landing = () => {
     const [personalizedLink, setPersonalizedLink] = useState("");
     const [copied, setCopied] = useState(false);
     const [dataLoading, setDataLoading] = useState(true);
+    const [loadingFetch, setLoadingFetch] = useState(false);
+
 
     useEffect(() => {
         const initializeData = async () => {
@@ -85,6 +87,20 @@ const Landing = () => {
         }
     };
 
+    const handleFetchGeneratedTags = async () => {
+        setLoadingFetch(true);
+        try {
+            const newTags = await fetchGeneratedTags();
+            setTags(newTags);
+            setSelectedTags([]);
+        } catch (error) {
+            console.error("Failed to fetch generated tags:", error);
+        } finally {
+            setLoadingFetch(false);
+        }
+    };
+
+
 
 
 
@@ -120,14 +136,45 @@ const Landing = () => {
                 </select>
             </div>
             <Tags tags={tags} selectedTags={selectedTags} onTagToggle={handleTagToggle} />
+
+            <button
+                onClick={handleFetchGeneratedTags}
+                style={{
+                    padding: "12px 20px",
+                    marginTop: "10px",
+                    backgroundColor: "#4CAF50",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    width: "100%",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    border: "none",
+                    transition: "background-color 0.3s, transform 0.3s",
+                    marginBottom: "10px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = "#45a049"}
+                onMouseOut={(e) => e.target.style.backgroundColor = "#4CAF50"}
+                disabled={loadingFetch}
+            >
+                {loadingFetch ? (
+                    <div className="button-loader"></div>
+                ) : (
+                    "Fetch Generated Tags"
+                )}
+            </button>
+
             <button
                 className="generate-button"
                 onClick={handleGenerateReview}
                 disabled={loading}
                 style={{
                     position: "relative",
-                    padding: "10px 15px",
+                    padding: "12px 20px",
                     display: "flex",
+                    borderRadius: "8px",
                     justifyContent: "center",
                     alignItems: "center",
                 }}

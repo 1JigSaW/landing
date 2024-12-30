@@ -69,4 +69,15 @@ export const saveReview = async (uniqueLink, text, tags, language) => {
     }
 };
 
+export const fetchGeneratedTags = async () => {
+    try {
+        const response = await apiClient.get("generate-tags/");
+        return response.data.tags;
+    } catch (error) {
+        console.error("Error fetching tags:", error);
+        throw new Error("Failed to fetch tags");
+    }
+};
+
+
 
